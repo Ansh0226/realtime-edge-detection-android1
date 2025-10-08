@@ -62,10 +62,13 @@ Java_com_example_realtimeedgedetection_gl_NativeGLRenderer_initRenderer(JNIEnv *
     glBindTexture(GL_TEXTURE_2D, textureId);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // ✅ Bind texture unit 0
+    glUseProgram(program);
+    glUniform1i(textureHandle, 0);
 }
 
 JNIEXPORT void JNICALL
-
 Java_com_example_realtimeedgedetection_gl_NativeGLRenderer_updateFrame(
         JNIEnv *env, jobject thiz, jbyteArray data, jint width, jint height) {
 
@@ -96,18 +99,27 @@ Java_com_example_realtimeedgedetection_gl_NativeGLRenderer_drawFrame(JNIEnv *env
                  frameWidth, frameHeight, 0,
                  GL_LUMINANCE, GL_UNSIGNED_BYTE, frameBuffer.data());
 
-    // draw fullscreen quad (as before)
-    GLfloat vertices[] = {
-            -1.f, -1.f,   0.f, 0.f,
-            1.f, -1.f,   1.f, 0.f,
-            -1.f,  1.f,   0.f, 1.f,
-            1.f,  1.f,   1.f, 1.f,
+    // ✅ Properly interleaved position + texcoord array
+    // ✅ Rotate texture 90° to the right (clockwise)
+    // ✅ Rotate 90° clockwise and correct vertical flip
+    // ✅ Flip horizontally (no rotation)
+    const GLfloat vertices[] = {
+            -1.f, -1.f,  1.f, 0.f,
+            1.f, -1.f,  1.f, 1.f,
+            -1.f,  1.f,  0.f, 0.f,
+            1.f,  1.f,  0.f, 1.f,
     };
 
-    glVertexAttribPointer(positionHandle, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), vertices);
+
+
+
+    const int stride = 4 * sizeof(GLfloat);
+
     glEnableVertexAttribArray(positionHandle);
-    glVertexAttribPointer(texCoordHandle, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), vertices + 2);
+    glVertexAttribPointer(positionHandle, 2, GL_FLOAT, GL_FALSE, stride, vertices);
+
     glEnableVertexAttribArray(texCoordHandle);
+    glVertexAttribPointer(texCoordHandle, 2, GL_FLOAT, GL_FALSE, stride, vertices + 2);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }

@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation("androidx.core:core-ktx:1.12.0")
 
     // ✅ Add OpenCV for Android
 //    implementation("org.opencv:opencv-android:4.10.0")
