@@ -99,5 +99,6 @@ TypeScript (Web): Demonstrates exporting native results to web.
 
 
 Screenshots
-![Edge Detection](screenshots/prcessedimage1.png)
+![Edge Detection](Screenshots/prcessedimage1.png)
+![Edge Detection](Screenshots/processedimage2.jpg)
 
