@@ -3,6 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools" >
 
     <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Declare that the app uses camera hardware -->
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+
+    <!-- If you want to explicitly require back camera -->
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.any" android:required="true" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"

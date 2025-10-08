@@ -13,15 +13,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!-- OpenGL Surface -->
+    <android.opengl.GLSurfaceView
+        android:id="@+id/glSurfaceView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <!-- Overlay Text (e.g., FPS counter, debug info) -->
     <TextView
         android:id="@+id/debugText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:text="Waiting for Frame"
         android:textColor="@android:color/white"
         android:background="#80000000"
         android:padding="8dp"
+        android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

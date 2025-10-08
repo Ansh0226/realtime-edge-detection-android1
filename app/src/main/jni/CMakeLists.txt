@@ -1,26 +1,33 @@
-# Minimum CMake version required
-cmake_minimum_required(VERSION 3.4.1)
+cmake_minimum_required(VERSION 3.10.2)
 
-# Project name
 project("realtimeedgedetection")
-set(OpenCV_DIR "../../../../sdk/native/jni")
-# --- Find OpenCV package ---
-find_package(OpenCV REQUIRED)
 
-# --- Add your native C++ source files ---
+# Enable modern C++
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# --- OpenCV include & lib directories ---
+include_directories("../../../../sdk/native/jni/include")
+
+# --- Add your native C++ sources ---
 add_library(
-        native-lib               # name of your shared library
+        native-lib
         SHARED
-        NativeProcessor.cpp      # file that will contain JNI + OpenCV logic
+        NativeProcessor.cpp
+        NativeGLRenderer.cpp
 )
 
-# --- Include OpenCV headers ---
-include_directories(${OpenCV_INCLUDE_DIRS})
+# --- Import prebuilt OpenCV shared lib ---
+add_library(opencv_java4 SHARED IMPORTED)
+set_target_properties(opencv_java4 PROPERTIES
+        IMPORTED_LOCATION "../../../../../sdk/native/libs/${ANDROID_ABI}/libopencv_java4.so"
+)
 
-# --- Link OpenCV + Android + OpenGL ES libraries ---
+# --- Link everything ---
 target_link_libraries(
         native-lib
-        ${OpenCV_LIBS}
+        opencv_java4
         log
         android
         EGL

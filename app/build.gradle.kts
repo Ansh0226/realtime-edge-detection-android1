@@ -29,7 +29,7 @@ android {
 
         externalNativeBuild {
             cmake {
-                cppFlags += ""
+                cppFlags += listOf("-std=c++17", "-frtti", "-fexceptions")
 //                this line to specify the androidx . media3 . common . C++ standard library
                         arguments += "-DANDROID_STL=c++_shared"
             }

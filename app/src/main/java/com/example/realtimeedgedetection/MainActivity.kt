@@ -5,6 +5,7 @@ import android.graphics.ImageFormat
 import android.graphics.SurfaceTexture
 import android.hardware.camera2.*
 import android.media.ImageReader
+import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.util.Log
 import android.view.Surface
@@ -12,6 +13,7 @@ import android.view.TextureView
 import android.widget.TextView
 import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AppCompatActivity
+import com.example.realtimeedgedetection.gl.NativeGLRenderer
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,10 +34,19 @@ class MainActivity : AppCompatActivity() {
     private lateinit var cameraDevice: CameraDevice
     private lateinit var captureSession: CameraCaptureSession
     private lateinit var imageReader: ImageReader
+    private lateinit var glSurfaceView: GLSurfaceView
+    private lateinit var renderer: NativeGLRenderer
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        glSurfaceView = findViewById(R.id.glSurfaceView)
+        renderer = NativeGLRenderer()
+        glSurfaceView.setEGLContextClientVersion(2)
+        glSurfaceView.setRenderer(renderer)
+        glSurfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
 
         // ✅ Call test function (Stage 3 check)
         testNative()
@@ -78,7 +89,7 @@ class MainActivity : AppCompatActivity() {
 
             // ✅ Send frame to native OpenCV
             val processed = processFrame(data, image.width, image.height)
-
+            renderer.updateFrame(processed, image.width, image.height)
             // Update debug overlay
             runOnUiThread {
                 debugText.text = "Frame processed: ${image.width}x${image.height}"
