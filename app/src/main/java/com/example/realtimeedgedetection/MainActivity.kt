@@ -17,6 +17,7 @@ import com.example.realtimeedgedetection.gl.NativeGLRenderer
 
 class MainActivity : AppCompatActivity() {
 
+    
     companion object {
         init {
             System.loadLibrary("native-lib")
