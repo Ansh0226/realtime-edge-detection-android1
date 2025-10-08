@@ -20,10 +20,18 @@ android {
         ndk {
             abiFilters += listOf("armeabi-v7a", "arm64-v8a")
         }
+        packaging {
+            jniLibs {
+                useLegacyPackaging = true
+            }
+        }
+
 
         externalNativeBuild {
             cmake {
                 cppFlags += ""
+//                this line to specify the androidx . media3 . common . C++ standard library
+                        arguments += "-DANDROID_STL=c++_shared"
             }
         }
     }
