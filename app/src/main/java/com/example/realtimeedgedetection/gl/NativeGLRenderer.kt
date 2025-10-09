@@ -56,17 +56,38 @@ class NativeGLRenderer : GLSurfaceView.Renderer {
             return
         }
 
-        val bmp = Bitmap.createBitmap(frameWidth, frameHeight, Bitmap.Config.ALPHA_8)
-        bmp.copyPixelsFromBuffer(ByteBuffer.wrap(lastFrame!!))
+        try {
+            // Create grayscale Bitmap in ARGB_8888
+            val bmp = Bitmap.createBitmap(frameWidth, frameHeight, Bitmap.Config.ARGB_8888)
 
-        val dir = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "EdgeDetection")
-        if (!dir.exists()) dir.mkdirs()
+            val buffer = ByteBuffer.wrap(lastFrame!!)
+            for (y in 0 until frameHeight) {
+                for (x in 0 until frameWidth) {
+                    val gray = buffer.get().toInt() and 0xFF
+                    val pixel = 0xFF shl 24 or (gray shl 16) or (gray shl 8) or gray
+                    bmp.setPixel(x, y, pixel)
+                }
+            }
 
-        val file = File(dir, "processed.png")
-        FileOutputStream(file).use {
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, it)
+            // ✅ Rotate 90° right
+            val matrix = android.graphics.Matrix()
+            matrix.postRotate(90f)
+            val rotated = Bitmap.createBitmap(bmp, 0, 0, bmp.width, bmp.height, matrix, true)
+
+            // Save rotated bitmap
+            val dir = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "EdgeDetection")
+            if (!dir.exists()) dir.mkdirs()
+
+            val file = File(dir, "processed.png")
+            FileOutputStream(file).use {
+                rotated.compress(Bitmap.CompressFormat.PNG, 100, it)
+            }
+
+            Log.i("NativeGLRenderer", "✅ Frame saved rotated at ${file.absolutePath}, size: ${file.length()} bytes")
+        } catch (e: Exception) {
+            Log.e("NativeGLRenderer", "❌ Failed to save frame", e)
         }
-
-        Log.i("NativeGLRenderer", "✅ Frame saved at ${file.absolutePath}")
     }
+
+
 }

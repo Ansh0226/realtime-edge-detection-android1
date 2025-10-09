@@ -17,6 +17,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.realtimeedgedetection.gl.NativeGLRenderer
+import com.example.realtimeedgedetection.server.FrameServer
 
 class MainActivity : AppCompatActivity() {
 
@@ -77,6 +78,15 @@ class MainActivity : AppCompatActivity() {
         testNative()
         Log.i("MainActivity", "✅ testNative() called successfully")
 
+
+        //start server
+        val server = FrameServer(this)
+        try {
+            server.start()
+            Log.i("MainActivity", "✅ FrameServer started on http://0.0.0.0:8080/frame")
+        } catch (e: Exception) {
+            Log.e("MainActivity", "❌ Failed to start server", e)
+        }
         // Capture button saves current processed frame
         captureButton.setOnClickListener {
             renderer.saveCurrentFrame(this)

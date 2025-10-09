@@ -1,13 +1,14 @@
-// Update stats under the image
-function updateStats() {
+async function updateFrame() {
   const img = document.getElementById("frame") as HTMLImageElement;
   const stats = document.getElementById("stats")!;
 
-  // Just a demo: we can't measure FPS here since it's static
-  stats.innerText = `Resolution: ${img.naturalWidth}x${img.naturalHeight} | FPS: (captured)`;
+  try {
+    img.src = `http://10.180.207.189:8080/frame?` + new Date().getTime(); // avoid cache
+    stats.innerText = "Fetching latest frame...";
+  } catch (e) {
+    stats.innerText = "❌ Failed to fetch frame";
+  }
 }
 
-// Update stats when the image loads
-window.onload = () => {
-  updateStats();
-};
+// Refresh every 2 seconds
+setInterval(updateFrame, 2000);
