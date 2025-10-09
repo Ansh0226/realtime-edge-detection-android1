@@ -168,4 +168,4 @@ Steps:
 
 ### Web Page
 
-![Web Page  demo 1](Screenshots/wdemo1.jpeg)
+![Web Page  demo 1](Screenshots/wdemo1.png)
