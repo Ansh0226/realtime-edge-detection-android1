@@ -2,37 +2,34 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <title>Edge Detection Viewer</title>
+    <meta charset="UTF-8">
+    <title>Edge Detection Web Viewer</title>
     <style>
         body {
+            background: #111;
+            color: #eee;
             font-family: Arial, sans-serif;
-            background: #121212;
-            color: white;
             text-align: center;
             padding: 20px;
         }
 
         #frame {
-            max-width: 80%;
-            border: 2px solid #00ffcc;
-            margin: 20px auto;
-            display: block;
+            max-width: 90%;
+            border: 3px solid #555;
+            border-radius: 8px;
+            margin-top: 20px;
         }
 
         #stats {
-            margin-top: 10px;
+            margin-top: 12px;
             font-size: 16px;
-            background: rgba(0, 0, 0, 0.5);
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 8px;
+            color: #0f0;
         }
     </style>
 </head>
 
 <body>
-    <h1>📷 Real-Time Edge Detection (Web Viewer)</h1>
+    <h1>📷 Processed Frame Viewer</h1>
     <img id="frame" src="sample_frame.png" alt="Processed Frame" />
     <div id="stats">Resolution: -- | FPS: --</div>
 

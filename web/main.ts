@@ -1,11 +1,13 @@
-// main.ts - Simulates stats updates for demo
-const stats = document.getElementById("stats") as HTMLDivElement;
+// Update stats under the image
+function updateStats() {
+  const img = document.getElementById("frame") as HTMLImageElement;
+  const stats = document.getElementById("stats")!;
 
-let fps = 15; // dummy FPS
-let resolution = "1920 x 1440"; // dummy resolution (match Android debugText)
+  // Just a demo: we can't measure FPS here since it's static
+  stats.innerText = `Resolution: ${img.naturalWidth}x${img.naturalHeight} | FPS: (captured)`;
+}
 
-// simulate stat updates every 1s
-setInterval(() => {
-  const time = new Date().toLocaleTimeString();
-  stats.innerText = `Resolution: ${resolution} | FPS: ${fps} | Updated: ${time}`;
-}, 1000);
+// Update stats when the image loads
+window.onload = () => {
+  updateStats();
+};

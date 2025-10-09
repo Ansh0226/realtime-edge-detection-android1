@@ -35,7 +35,7 @@ Java_com_example_realtimeedgedetection_MainActivity_processFrame(
     jbyteArray result = env->NewByteArray(n);
     env->SetByteArrayRegion(result, 0, n, reinterpret_cast<jbyte*>(edges.data));
 
-    LOGI("✅ Frame processed with OpenCV: %dx%d", width, height);
+//    LOGI("✅ Frame processed with OpenCV: %dx%d", width, height);
 
     return result;
 }
