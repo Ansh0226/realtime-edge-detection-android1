@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Surface
 import android.view.TextureView
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.realtimeedgedetection.gl.NativeGLRenderer
@@ -33,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var textureView: TextureView
     private lateinit var debugText: TextView
     private lateinit var glSurfaceView: GLSurfaceView
+    private lateinit var captureButton: Button
 
     // Camera
     private lateinit var cameraDevice: CameraDevice
@@ -53,6 +55,7 @@ class MainActivity : AppCompatActivity() {
         textureView = findViewById(R.id.textureView)
         debugText = findViewById(R.id.debugText)
         glSurfaceView = findViewById(R.id.glSurfaceView)
+        captureButton = findViewById(R.id.captureButton)
 
         // GLSurfaceView setup
         renderer = NativeGLRenderer()
@@ -61,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         glSurfaceView.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
 
         // Transparent overlay
-        glSurfaceView.setZOrderOnTop(true)
+        glSurfaceView.setZOrderMediaOverlay(true)
         glSurfaceView.holder.setFormat(PixelFormat.TRANSLUCENT)
 
         // Ask for permission
@@ -73,6 +76,11 @@ class MainActivity : AppCompatActivity() {
         // Test JNI
         testNative()
         Log.i("MainActivity", "✅ testNative() called successfully")
+
+        // Capture button saves current processed frame
+        captureButton.setOnClickListener {
+            renderer.saveCurrentFrame(this)
+        }
 
         // TextureView listener
         textureView.surfaceTextureListener = object : TextureView.SurfaceTextureListener {
@@ -89,7 +97,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Permission result
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 1001 && grantResults.isNotEmpty() &&
             grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -142,14 +152,19 @@ class MainActivity : AppCompatActivity() {
         val map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
         val previewSize = map!!.getOutputSizes(SurfaceTexture::class.java)[0]
 
-        imageReader = ImageReader.newInstance(previewSize.width, previewSize.height, ImageFormat.YUV_420_888, 2)
+        imageReader = ImageReader.newInstance(
+            previewSize.width, previewSize.height,
+            ImageFormat.YUV_420_888, 2
+        )
         imageReader.setOnImageAvailableListener({ reader ->
             val image = reader.acquireLatestImage() ?: return@setOnImageAvailableListener
             val data = extractTightY(image)
             image.close()
 
             val processed = processFrame(data, previewSize.width, previewSize.height)
-            renderer.updateFrame(processed, previewSize.width, previewSize.height)
+
+            // 🔹 now use updateFrameBuffer (stores lastFrame too)
+            renderer.updateFrameBuffer(processed, previewSize.width, previewSize.height)
 
             glSurfaceView.requestRender()
 
@@ -163,6 +178,7 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     debugText.text = "Frame: ${previewSize.width}x${previewSize.height} | FPS: $fps"
                 }
+                Log.i("MainActivity", "✅ FPS updated: $fps")
             }
         }, null)
 
@@ -177,11 +193,13 @@ class MainActivity : AppCompatActivity() {
                     object : CameraCaptureSession.StateCallback() {
                         override fun onConfigured(session: CameraCaptureSession) {
                             captureSession = session
-                            val requestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
+                            val requestBuilder =
+                                cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
                             requestBuilder.addTarget(previewSurface)
                             requestBuilder.addTarget(imageReader.surface)
                             session.setRepeatingRequest(requestBuilder.build(), null, null)
                         }
+
                         override fun onConfigureFailed(session: CameraCaptureSession) {
                             Log.e("Camera", "❌ Capture session configuration failed")
                         }

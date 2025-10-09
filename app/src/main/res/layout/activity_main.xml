@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_height="match_parent">
 
     <!-- Camera Preview -->
     <TextureView
@@ -12,23 +10,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- OpenGL Surface -->
+    <!-- OpenGL Surface (drawn above TextureView but behind Views) -->
     <android.opengl.GLSurfaceView
         android:id="@+id/glSurfaceView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent" />
+        android:layout_height="match_parent" />
 
-    <!-- Overlay Text (e.g., FPS counter, debug info) -->
+    <!-- Debug Text (FPS + resolution) -->
     <TextView
         android:id="@+id/debugText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:textColor="@android:color/white"
+        android:layout_gravity="top|start"
+        android:layout_margin="16dp"
         android:background="#80000000"
         android:padding="8dp"
-        android:layout_margin="16dp"
-        android:layout_gravity="top|start" /> <!-- ✅ CORRECTED: Use layout_gravity -->
+        android:text="Waiting..."
+        android:textColor="@android:color/white"
+        android:elevation="8dp" />
+
+    <!-- Capture Button -->
+    <Button
+        android:id="@+id/captureButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Capture Frame"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="32dp"
+        android:background="@android:color/holo_blue_dark"
+        android:textColor="@android:color/white"
+        android:elevation="8dp"/>
 
 </FrameLayout>
